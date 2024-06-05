@@ -31,8 +31,46 @@ class BasicAuth(Auth):
 		except BaseException:
 			return None
 		
-	def extract_user_credentials(self, decoded_base64_authorization_header: str) -> Tuple[str, str]:
+	def extract_user_credentials(self,
+                                 decoded_base64_authorization_header: str) -> Tuple[str, str]:
 		"""in the class BasicAuth that returns the user email and password
 		from the Base64 decoded value."""
 		return (None, None) if (decoded_base64_authorization_header is None
-						        or type())
+						        or type(decoded_base64_authorization_header) is not str
+                                or ":" not in decoded_base64_authorization_header)\
+                                        else tuple(decoded_base64_authorization_header.split(":"))
+
+    def user_object_from_credentials(self,
+                                     user_email: str,
+                                     user_pwd: str) -> TypeVar('User'):
+        """in the class BasicAuth that returns the User instance based on his email and password.
+        Args:
+            self (_type_): Basic auth instance
+            user_email(str): user email
+            user_pwd(str): user pwd
+        """
+        if not (user_email and isinstance(user_email, str) and
+                user_pwd and isinstance(user_pwd, str)):
+            return None
+
+        try:
+            users = User.search({'email': user_email})
+        except Exception:
+            return None
+
+        for user in users:
+            if user.is_valid_password(user_pwd):
+                return user
+
+        return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """get current user"""
+        try:
+            auth_header = self.authorization_header(request)
+            encoded = self.extract_base64_authorization_header(auth_header)
+            decoded = self.decode_base64_authorization_header(encoded)
+            email, password = self.extract_user_credentials(decoded)
+            return self.user_object_from_credentials(email, password)
+        except Exception:
+            return None
