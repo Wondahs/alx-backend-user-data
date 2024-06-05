@@ -15,13 +15,15 @@ class BasicAuth(Auth):
         """returns the Base64 part of the Authorization header
         for a Basic Authentication:"""
         return None if (authorization_header is None
-                or type(authorization_header) is not str
-                or not authorization_header.startswith("Basic "))\
-                        else authorization_header.split("Basic")[-1].strip()
+                        or type(authorization_header) is not str
+                        or not authorization_header.startswith("Basic "))\
+            else authorization_header.split("Basic")[-1].strip()
 
     def decode_base64_authorization_header(self,
-                                           base64_authorization_header: str) -> str:
-        """returns the decoded value of a Base64 string base64_authorization_header"""
+                                           base64_authorization_header: str)\
+            -> str:
+        """returns the decoded value
+        of a Base64 string base64_authorization_header"""
         if (base64_authorization_header is None
                 or type(base64_authorization_header) is not str):
             return None
@@ -32,13 +34,15 @@ class BasicAuth(Auth):
             return None
 
     def extract_user_credentials(self,
-                                 decoded_base64_authorization_header: str) -> Tuple[str, str]:
+                                 decoded_base64_authorization_header: str)\
+            -> Tuple[str, str]:
         """in the class BasicAuth that returns the user email and password
         from the Base64 decoded value."""
-        return (None, None) if (decoded_base64_authorization_header is None
+        return (None, None)\
+            if (decoded_base64_authorization_header is None
                 or type(decoded_base64_authorization_header) is not str
                 or ":" not in decoded_base64_authorization_header)\
-                        else tuple(decoded_base64_authorization_header.split(":", 1))
+            else tuple(decoded_base64_authorization_header.split(":", 1))
 
     def user_object_from_credentials(self,
                                      user_email: str,
@@ -63,6 +67,7 @@ class BasicAuth(Auth):
                 return user
 
         return None
+
     def current_user(self, request=None) -> TypeVar('User'):
         """get current user"""
         try:

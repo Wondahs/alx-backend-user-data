@@ -18,6 +18,7 @@ class Auth:
             path = path if path.endswith('/') else path + '/'
             return path not in excluded_paths
         else:
+            path = path.strip("/") if path.endswith('/') else path
             path = path.replace("*", "")
             return not all(path in ex_path for ex_path in excluded_paths)
 
@@ -30,4 +31,3 @@ class Auth:
     def current_user(self, request=None) -> TypeVar('User'):
         """returns None"""
         return None
-
