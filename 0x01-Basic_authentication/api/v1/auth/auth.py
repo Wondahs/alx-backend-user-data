@@ -14,13 +14,8 @@ class Auth:
         """
         if path is None or excluded_paths in [[], None]:
             return True
-        if not path.endswith("*"):
-            path = path if path.endswith('/') else path + '/'
-            return path not in excluded_paths
-        else:
-            path = path.strip("/") if path.endswith('/') else path
-            path = path.replace("*", "")
-            return not all(path in ex_path for ex_path in excluded_paths)
+        path = path if path.endswith('/') else path + '/'
+        return not all(pat in path for pat.replace("*", "") in excluded_paths)
 
     def authorization_header(self, request=None) -> str:
         """ validate all requests to secure the API"""
