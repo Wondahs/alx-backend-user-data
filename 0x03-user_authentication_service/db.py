@@ -35,12 +35,16 @@ class DB:
 
     def add_user(self, email: str, hashed_password: str) -> User:
         """Adds New User"""
-        new_user = User()
-        new_user.email = email
-        new_user.hashed_password = hashed_password
-        self._session.add(new_user)
-        self._session.commit()
-        return new_user
+        try:
+            new_user = User()
+            new_user.email = email
+            new_user.hashed_password = hashed_password
+            self._session.add(new_user)
+            self._session.commit()
+            return new_user
+        except Exception:
+            self._session.rollback()
+            return None
 
     def find_user_by(self, **arg: dict) -> User:
         """Finds user by arg"""
