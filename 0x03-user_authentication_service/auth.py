@@ -24,7 +24,7 @@ class Auth:
         except NoResultFound:
             hashed_password = _hash_password(password)
             return self._db.add_user(email, hashed_password)
-    
+
     def valid_login(self, email: str, password: str) -> bool:
         """Validates user credentials"""
         try:
@@ -34,7 +34,7 @@ class Auth:
         if not bcrypt.checkpw(password.encode("utf-8"), user.hashed_password):
             return False
         return True
-    
+
     def create_session(self, email: str) -> str:
         """takes an email string argument
         and returns the session ID as a string."""
@@ -45,8 +45,9 @@ class Auth:
             return session_id
         except NoResultFound:
             return None
-    
-    def get_user_from_session_id(self, session_id: str) -> Union[TypeVar("User"), None]:
+
+    def get_user_from_session_id(self, session_id: str)\
+            -> Union[TypeVar("User"), None]:
         """takes a single session_id string argument
         and returns the corresponding User or None."""
         if session_id:
@@ -67,7 +68,7 @@ class Auth:
             except NoResultFound:
                 return None
         return None
-    
+
     def get_reset_password_token(self, email: str) -> str:
         """takes an email string argument and returns a string."""
         try:
@@ -77,7 +78,7 @@ class Auth:
             return reset_token
         except NoResultFound:
             raise ValueError()
-    
+
     def update_password(self, reset_token: str, password: str) -> None:
         """takes reset_token string argument and a password string argument
         and returns None."""
@@ -89,7 +90,6 @@ class Auth:
         except NoResultFound:
             raise ValueError()
         return None
-        
 
 
 def _hash_password(password: str) -> bytes:
@@ -101,8 +101,9 @@ def _hash_password(password: str) -> bytes:
     hashed_password = bcrypt.hashpw(password_bytes, salt)
     return hashed_password
 
+
 def _generate_uuid() -> str:
     """GEnerates a new UUID"""
     from uuid import uuid4
-    
+
     return str(uuid4())
