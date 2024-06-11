@@ -49,6 +49,46 @@ class Auth:
     def get_user_from_session_id(self, session_id: str) -> Union[TypeVar("User"), None]:
         """takes a single session_id string argument
         and returns the corresponding User or None."""
+        if session_id:
+            try:
+                user = self._db.find_user_by(session_id=session_id)
+                return user
+            except NoResultFound:
+                return None
+        return None
+
+    def destroy_session(self, session_id: str) -> Union[TypeVar("User"), None]:
+        """takes a single session_id string argument
+        and destroys the session."""
+        if session_id:
+            try:
+                user = self._db.find_user_by(session_id=session_id)
+                user.session_id = None
+            except NoResultFound:
+                return None
+        return None
+    
+    def get_reset_password_token(self, email: str) -> str:
+        """takes an email string argument and returns a string."""
+        try:
+            reset_token = _generate_uuid()
+            user = self._db.find_user_by(email=email)
+            self._db.update_user(user.id, reset_token=reset_token)
+            return reset_token
+        except NoResultFound:
+            raise ValueError()
+    
+    def update_password(self, reset_token: str, password: str) -> None:
+        """takes reset_token string argument and a password string argument
+        and returns None."""
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+            hashed_password = _hash_password(password)
+            self._db.update_user(user.id, hashed_password=hashed_password,
+                                 reset_token=reset_token)
+        except NoResultFound:
+            raise ValueError()
+        return None
         
 
 

@@ -56,10 +56,8 @@ class DB:
         """Updates User data"""
         user = self.find_user_by(id=user_id)
         for k, v in kwargs.items():
-            key = k
-            val = v
-        try:
-            setattr(user, key, val)
-        except AttributeError:
-            raise ValueError
+            try:
+                setattr(user, k, v)
+            except AttributeError:
+                raise ValueError
         self._session.commit()
