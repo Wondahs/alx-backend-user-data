@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Flask app"""
-from flask import Flask, jsonify, request, abort, redirect
+from flask import Flask, jsonify, request, abort, redirect, url_for
 from auth import Auth, NoResultFound
 
 
@@ -13,7 +13,7 @@ def home():
     """return a JSON payload of the form:
     {"message": "Bienvenue")
     """
-    return jsonify({"message": "Bienvenue"})
+    return jsonify({"message": "Bienvenue"}), 200
 
 @app.route("/users", methods=["POST"], strict_slashes=False)
 def register_user():
@@ -47,7 +47,7 @@ def logout():
     user = AUTH.get_user_from_session_id(session_id)
     if user:
         AUTH.destroy_session(session_id)
-        redirect("/")
+        return redirect(url_for('home'))
     else:
         abort(403)
 
