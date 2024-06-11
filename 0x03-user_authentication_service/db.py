@@ -33,7 +33,7 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> TypeVar("User"):
+    def add_user(self, email: str, hashed_password: str) -> User:
         """Adds New User"""
         new_user = User()
         new_user.email = email
@@ -42,7 +42,7 @@ class DB:
         self._session.commit()
         return new_user
 
-    def find_user_by(self, **arg: dict) -> TypeVar("User"):
+    def find_user_by(self, **arg: dict) -> User:
         """Finds user by arg"""
         try:
             user = self._session.query(User).filter_by(**arg).first()
@@ -52,7 +52,7 @@ class DB:
         except InvalidRequestError as e:
             raise e
 
-    def update_user(self, user_id: int, **kwargs: dict) -> TypeVar("User"):
+    def update_user(self, user_id: int, **kwargs: dict) -> User:
         """Updates User data"""
         user = self.find_user_by(id=user_id)
         for k, v in kwargs.items():
