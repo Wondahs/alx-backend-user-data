@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """DB module
 """
 from sqlalchemy import create_engine
@@ -46,7 +47,7 @@ class DB:
             self._session.rollback()
             return None
 
-    def find_user_by(self, **arg: dict) -> User:
+    def find_user_by(self, **arg) -> User:
         """Finds user by arg"""
         try:
             user = self._session.query(User).filter_by(**arg).first()
@@ -56,7 +57,7 @@ class DB:
         except InvalidRequestError as e:
             raise e
 
-    def update_user(self, user_id: int, **kwargs: dict) -> User:
+    def update_user(self, user_id: int, **kwargs) -> User:
         """Updates User data"""
         user = self.find_user_by(id=user_id)
         for k, v in kwargs.items():

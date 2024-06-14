@@ -14,7 +14,7 @@ class Auth:
     def __init__(self):
         self._db = DB()
 
-    def register_user(self, email: str, password: str) -> TypeVar("User"):
+    def register_user(self, email: str, password: str) -> User:
         """takes mandatory email and password string arguments
         and returns a User object."""
         try:
@@ -62,11 +62,7 @@ class Auth:
         """takes a single session_id string argument
         and destroys the session."""
         if session_id:
-            try:
-                user = self._db.find_user_by(session_id=session_id)
-                user.session_id = None
-            except NoResultFound:
-                return None
+            self._db.update_user(user_id, session_id=None)
         return None
 
     def get_reset_password_token(self, email: str) -> str:
@@ -86,7 +82,7 @@ class Auth:
             user = self._db.find_user_by(reset_token=reset_token)
             hashed_password = _hash_password(password)
             self._db.update_user(user.id, hashed_password=hashed_password,
-                                 reset_token=reset_token)
+                                 reset_token=None)
         except NoResultFound:
             raise ValueError()
         return None
